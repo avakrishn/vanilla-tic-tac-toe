@@ -65,6 +65,10 @@ button:hover, input:hover{
     display: flex;
 }
 
+.app{
+    display: flex;
+    flex-direction: column;
+}
 
 .actions button, .chooseBoard button{
     height: 40px;
