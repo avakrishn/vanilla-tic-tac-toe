@@ -13,6 +13,7 @@ function chooseBoardSize(){
     boardValue.innerText = slider.value;
     slider.addEventListener('change', updateValue);
     reset.addEventListener('click', resetGame);
+    initGame(parseInt(slider.value));
 
     function updateValue(){
         boardValue.innerText = this.value;
@@ -41,7 +42,7 @@ function initGame(boardSize){
         remaining: boardSize*boardSize,
         lastButton: [],
     }
-   
+
     const game = document.querySelector('.game');
     const undo = document.querySelector('.undo');
 
@@ -52,8 +53,6 @@ function initGame(boardSize){
 
     function createBoard(game){
         const n = state.size;
-        // create N*N board
-        // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
         const newBoard = new Array(n*n).fill(' ');
         let counter = 0;
 
@@ -69,7 +68,7 @@ function initGame(boardSize){
                 btn.classList.add(`col`, `btn${counter}`);
                 btn.addEventListener('click', handleClick);
                 btn.setAttribute('data', counter);
-                // btn.innerText = state.board[counter];
+
                 row.append(btn);
                 counter++;
             }
@@ -89,7 +88,7 @@ function initGame(boardSize){
         if(state.remaining === (state.size * state.size)){
             slider.disabled = true;
             slider.style.background = 'grey';
-            chooseText.innerText = "Reset Game To Change Board";
+            chooseText.innerText = "Reset To Change Board";
         }
 
         state.board[btnID] = (state.player) ? "X" : "O";
@@ -154,7 +153,6 @@ function initGame(boardSize){
         const rows = checkRows(),
             cols = checkColumns(),
             diagonals = checkDiagonals();
-            // need to execute all three checks to see if multiple of them are true inorder to correctly highlight all buttons that satisfy a win
 
         return rows || cols || diagonals;
     }
@@ -163,19 +161,18 @@ function initGame(boardSize){
         const n = state.size;
         
         for(let i = 0; i < n*n; i = i+n){
-            // const row = state.board.slice(i,i+n);
+
             const rowIndices = [];
             for(let index = i; index < i+n; index++){
                 rowIndices.push(index);
             } 
 
-            // checking to see if the previous player to click a button in fact won by filling up an entire row with the same previous player symbol (know an entire row is filled if numMatches(row) == n ) where n is the length of the row
             if(numMatches(rowIndices) === n) {
                 markButtons(rowIndices);
                 return true; 
             } 
         }
-        // there are no full rows that match
+
         return false;
     }
 
@@ -235,12 +232,8 @@ function initGame(boardSize){
     
     function numMatches(arr){
 
-         // need to check the last player so use bang operation to get the previous player because by this point the state.player is pointing to the next player
-
-         // return the number within the arr = row || column || diagonal that have elements that match the previous player symbol
-
         const prevPlayer = (!state.player) ? "X" : "O";
-        
+
         return arr.reduce((total, element) => {
             return total = (state.board[element] === prevPlayer) ? total + 1 : total;
         }, 0);
@@ -268,41 +261,3 @@ function initGame(boardSize){
         })
     }
 }
-
-
-/*
-                wins:
-                each row
-                each col
-                two diagonals
-                    [00][11][22][33] -- add both row and col
-                    [03][1,2][2,1][3,0] -- add row subtract col
-
-                [-,-,-,-]
-                [-,-,-,-]
-                [-,-,-,-]
-                [-,-,-,-]
-
-                [0,1,2,3]
-                [4,5,6,7]
-                [8,9,10,11]
-                [12,13,14,15]
-
-                ["0,1,2,3," "4,5,6,7," "8,9,10,11" ,"12,13,14,15"] rows
-
-                ["0",1,2,3,"4",5,6,7,"8",9,10,11,"12",13,14,15] cols
-
-                ["0",1,2,3,4,"5",6,7,8,9,"10",11,12,13,14,"15"] diagonal 1 - start at 0 then keep adding n+1 to it till out of bounds to get first diagonal indices
-
-                [0,1,2,"3",4,5,"6",7,8,"9",10,11,"12",13,14,15] diagonal 2 - start at n-1 and add n-1 each time till out of bounds to get diagonal 2
-
-                [0, 1, 2, 3, 4]
-                [5, 6, 7, 8, 9]
-                [10,11,12,13,14]
-                [15,16,17,18,19]
-                [20,21,22,23,24]
-
-                [0,6,12,18,24]
-                [4,8,12,16,20]
-        
-        */
