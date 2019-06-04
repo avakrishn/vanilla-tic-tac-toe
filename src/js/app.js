@@ -40,7 +40,7 @@ function initApp(){
             }
             app.append(row);
         }
-        // displayPlayer();
+
         displayBoard();
         
     }
@@ -48,17 +48,17 @@ function initApp(){
     function handleClick(){
         const btn = this;
         const btnID = btn.getAttribute('data');
+
         state.board[btnID] = (state.player) ? "X" : "O";
-        // changePlayer();
-        state.player = !state.player;
+        state.player = !state.player; // change to next player
         state.remaining--;
+
         btn.setAttribute("disabled", true);
         displayBoard();
     }
 
     function displayBoard(){
         
-        const playerDiv = document.querySelector('.player');
         const n = state.size;
         const prevPlayer = (!state.player) ? "X" : "O";
 
@@ -66,26 +66,29 @@ function initApp(){
             const btn = document.querySelector(`.col${i}`);
             btn.innerText = state.board[i];
         }
-        displayPlayer();
+
+        
         if(isTie()){
-            playerDiv.innerText = "Tie Game!";
-        }if(checkRows()){
-            playerDiv.innerText =`Player ${prevPlayer} Wins!`;
+            displayPlayerOrResult("Tie Game!");
+        }else if(isWin()){
+            displayPlayerOrResult(`Player ${prevPlayer} Wins!`);
+        }else{
+            displayPlayerOrResult();
         }
         console.log(state.board);
-        checkRows();
     }
 
-    function displayPlayer(){
+    function displayPlayerOrResult(result){
         const player = document.querySelector('.player');
-        player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
+        if(!result){
+            player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
+        }else{
+            player.innerText = result;
+            const allBtns = document.querySelectorAll('.game button');
+            allBtns.forEach(btn => btn.setAttribute('disabled', true));
+        }
+        
     }
-
-    function displayResult(){
-
-    }
-
-
 
     function isTie(){
         return (state.remaining === 0) 
@@ -94,32 +97,49 @@ function initApp(){
     function isWin(){
         return checkRows() || checkColumns() || checkDiagonals();
     }
+
     function checkRows(){
         const n = state.size;
-        const prevPlayer = (!state.player) ? "X" : "O"; // need to check the last player so use bang operation to get the previous player because by this point the state.player is pointing to the next player
         for(let i = 0; i < n*n; i = i+n){
             const row = state.board.slice(i,i+n);
-            // checking to see if the last player to click a button in fact won by filling up an entire row 
-            const numMatches = row.reduce((total, element) => {
-                return total = (element === prevPlayer) ? total + 1 : total;
-            }, 0);
-            // if the full row has all buttons filled (all n) and are equal to previous player symbol) then return true
-            if(numMatches === n){
-                // createHighlight();
-                return true;
-            }
-            
+
+            // checking to see if the previous player to click a button in fact won by filling up an entire row with the same previous player symbol (know an entire row is filled if numMatches(row) == n ) where n is the length of the row
+            if(numMatches(row) === n) return true;  
         }
         // there are no full rows that match
         return false;
     }
     function checkColumns(){
-
+        const n = state.size;
+        for(let i = 0; i < n; i++){
+            const column = [];
+            for(let j = i; j < n*n; j=j+n){
+                column.push(state.board[j])
+            }
+            if(numMatches(column) === n) return true;
+        }
+        return false;
     }
+
     function checkDiagonals(){
 
     }
+    
+    function numMatches(arr){
 
+         // need to check the last player so use bang operation to get the previous player because by this point the state.player is pointing to the next player
+
+         // return the number within the arr = row || column || diagonal that have elements that match the previous player symbol
+
+        const prevPlayer = (!state.player) ? "X" : "O";
+        return arr.reduce((total, element) => {
+            return total = (element === prevPlayer) ? total + 1 : total;
+        }, 0);
+    }
+
+    function createHighlight(){
+
+    }
 }
 
 
