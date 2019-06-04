@@ -47,6 +47,7 @@ function initApp(){
 
     function displayBoard(){
         const player = document.querySelector('.player');
+        const result = document.querySelector('.result');
         const n = state.size;
 
         for(let i = 0; i < n*n; i++){
@@ -55,6 +56,9 @@ function initApp(){
         }
         player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
 
+        if(isTie()){
+            result.innerText = "Tie Game!";
+        }
         console.log(state.board);
         
     }
@@ -70,6 +74,9 @@ function initApp(){
         displayBoard();
     }
 
+    function isTie(){
+        return (state.remaining === 0) 
+    }
 
 }
 
