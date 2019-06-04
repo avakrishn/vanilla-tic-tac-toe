@@ -31,7 +31,7 @@ function initApp(){
             row.classList.add(`row`, `row${rows}`)
             for(let cols = 0; cols < n; cols++){
                 const btn = document.createElement('button');
-                btn.classList.add(`col`, `col${counter}`);
+                btn.classList.add(`col`, `btn${counter}`);
                 btn.addEventListener('click', handleClick);
                 btn.setAttribute('data', counter);
                 // btn.innerText = state.board[counter];
@@ -63,7 +63,7 @@ function initApp(){
         const prevPlayer = (!state.player) ? "X" : "O";
 
         for(let i = 0; i < n*n; i++){
-            const btn = document.querySelector(`.col${i}`);
+            const btn = document.querySelector(`.btn${i}`);
             btn.innerText = state.board[i];
         }
 
@@ -95,16 +95,28 @@ function initApp(){
     }
 
     function isWin(){
-        return checkRows() || checkColumns() || checkDiagonals();
+        const rows = checkRows(),
+            cols = checkColumns(),
+            diagonals = checkDiagonals();
+            // need to execute all three checks to see if multiple of them are true inorder to correctly highlight all buttons that satisfy a win
+
+        return rows || cols || diagonals;
     }
 
     function checkRows(){
         const n = state.size;
         for(let i = 0; i < n*n; i = i+n){
-            const row = state.board.slice(i,i+n);
+            // const row = state.board.slice(i,i+n);
+            const rowIndices = [];
+            for(let index = i; index < i+n; index++){
+                rowIndices.push(index);
+            } 
 
             // checking to see if the previous player to click a button in fact won by filling up an entire row with the same previous player symbol (know an entire row is filled if numMatches(row) == n ) where n is the length of the row
-            if(numMatches(row) === n) return true;  
+            if(numMatches(rowIndices) === n) {
+                markButtons(rowIndices);
+                return true; 
+            } 
         }
         // there are no full rows that match
         return false;
@@ -113,29 +125,51 @@ function initApp(){
     function checkColumns(){
         const n = state.size;
         for(let i = 0; i < n; i++){
-            const column = [];
+            const columnIndices = [];
             for(let j = i; j < n*n; j=j+n){
-                column.push(state.board[j])
+                columnIndices.push(j);
             }
-            if(numMatches(column) === n) return true;
+            if(numMatches(columnIndices) === n){
+                markButtons(columnIndices);
+                return true;
+            } 
         }
         return false;
     }
 
     function checkDiagonals(){
         const n = state.size;
-        let d1 = 0, d2= n-1, diagonal1 = [], diagonal2 = [];
+        let d1 = 0, 
+            d2 = n-1, 
+            diagonal1Indices = [], 
+            diagonal2Indices =[],
+            count = 0;
 
         while(d1 < n*n){
-            diagonal1.push(state.board[d1]);
+            diagonal1Indices.push(d1);
             d1 += (n+1);
         }
-        while(d2 < n*n){
-            diagonal2.push(state.board[d2]);
+        while(d2 < n*n && count <n){
+            diagonal2Indices.push(d2);
+            count++;
             d2 += (n-1);
         }
-        if(numMatches(diagonal1) === n || numMatches(diagonal2) === n) return true;
 
+        const diagonal1Matches = numMatches(diagonal1Indices);
+        const diagonal2Matches = numMatches(diagonal2Indices);
+        if(diagonal1Matches === n){
+            markButtons(diagonal1Indices);
+        } 
+        
+        if(diagonal2Matches=== n){
+            markButtons(diagonal2Indices);
+        } 
+
+        if(diagonal1Matches === n || diagonal2Matches === n){
+            return true;
+        }
+
+        return false;
     }
     
     function numMatches(arr){
@@ -146,12 +180,15 @@ function initApp(){
 
         const prevPlayer = (!state.player) ? "X" : "O";
         return arr.reduce((total, element) => {
-            return total = (element === prevPlayer) ? total + 1 : total;
+            return total = (state.board[element] === prevPlayer) ? total + 1 : total;
         }, 0);
     }
 
-    function createHighlight(){
-
+    function markButtons(indicesArr){
+        indicesArr.forEach(index => {
+            const btn = document.querySelector(`.btn${index}`);
+            btn.style.backgroundColor = 'yellow';
+        })
     }
 }
 
