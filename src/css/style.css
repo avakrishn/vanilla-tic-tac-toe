@@ -1,0 +1,90 @@
+body, html{
+    box-sizing: border-box;
+    width: 100%;
+    background: rgb(248, 219, 138);
+    font-family: 'sans-serif';
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h1{
+    font-size: 50px;
+    margin: 30px 0;
+}
+
+input{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    margin: 0 auto;
+    width: 40%;
+    height: 10px;
+    background: green;
+    outline: none;
+    opacity: 0.7;
+    border-radius: 25px;
+    /* -webkit-transition: .2s; 0.2 seconds transition on hover */
+}
+
+
+h2{
+    font-size: 30px;
+    margin: 15px 0;
+}
+
+button{
+    font-weight: bold;
+    background: #fff;
+    border: 1px solid #999;
+    text-align: center;
+    color: rgb(87, 87, 87);
+}
+
+button:hover, input:hover{
+    cursor: pointer;
+}
+
+.game button{
+    padding: 0;
+    margin: 0;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    line-height: 60px;
+} 
+
+.game button:focus{
+    outline: none;
+}
+
+.game{
+    margin: 0 auto;
+}
+.game div{
+    display: flex;
+}
+
+
+.actions button, .chooseBoard button{
+    height: 40px;
+    font-size: 20px;
+    margin: 30px 10px;
+    border-radius: 10px;
+    background: green;
+    color: white;
+    opacity: 0.7;
+    border: none;
+}
+.actions button{
+    width: 80px;
+}
+
+.chooseBoard button{
+    width: 140px; 
+}
+
+.hl{
+    background: rgb(116, 197, 141);
+    color: white;
+}
