@@ -1,37 +1,60 @@
 'use-strict';
 
 window.onload = function(){
-    initApp();
-
-    const reset = document.querySelector('.reset');
-    reset.addEventListener('click', initApp);
+    chooseBoardSize();
 }
 
-function initApp(){
-   
+function chooseBoardSize(){
+    
+    const slider = document.querySelector('input');
+    slider.addEventListener('change', updateValue);
+
+    const boardValue = document.querySelector('.boardValue');
+    boardValue.innerText = slider.value;
+
+    const reset = document.querySelector('.reset');
+    reset.addEventListener('click', resetGame);
+
+    function updateValue(){
+        boardValue.innerText = this.value;
+        initGame(parseInt(this.value));
+    }
+
+    function resetGame(){
+        const chooseText = document.querySelector('.chooseText');
+
+        slider.disabled = false;
+        chooseText.innerText = "Choose Your Board Size";
+        initGame(parseInt(slider.value));
+
+    }
+
+}
+
+function initGame(boardSize){
+
     const state ={
-        size : 3,
+        size : boardSize,
         board : [],
         player : true, // true = "X" and false = "O"
-        remaining: 3*3,
+        remaining: boardSize*boardSize,
         lastButton: [],
     }
    
-    const app = document.querySelector('.game');
+    const game = document.querySelector('.game');
     const undo = document.querySelector('.undo');
-    app.innerHTML="";
-    createBoard(app);
+    game.innerHTML="";
+    createBoard(game);
 
     undo.addEventListener('click', undoLastMove);
 
-    function createBoard(app){
+    function createBoard(game){
         const n = state.size;
         // create N*N board
         // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
         const newBoard = new Array(n*n).fill(' ');
         state.board = newBoard;
 
-        const buttonDiv = document.createElement('div');
         let counter = 0;
         
         for(let rows = 0; rows < n; rows++){
@@ -46,7 +69,7 @@ function initApp(){
                 row.append(btn);
                 counter++;
             }
-            app.append(row);
+            game.append(row);
         }
 
         displayBoard();
@@ -55,6 +78,15 @@ function initApp(){
 
     function handleClick(){
         // undo.disabled = false;
+
+        if(state.remaining === (state.size * state.size)){
+            const slider = document.querySelector('input');
+            const chooseText = document.querySelector('.chooseText');
+            
+            slider.disabled = true;
+            chooseText.innerText = "Reset Game To Change Board";
+        }
+
         const btn = this;
         const btnID = btn.getAttribute('data');
 
@@ -113,6 +145,7 @@ function initApp(){
     }
 
     function isWin(){
+        
         const rows = checkRows(),
             cols = checkColumns(),
             diagonals = checkDiagonals();
@@ -122,7 +155,9 @@ function initApp(){
     }
 
     function checkRows(){
+        
         const n = state.size;
+        
         for(let i = 0; i < n*n; i = i+n){
             // const row = state.board.slice(i,i+n);
             const rowIndices = [];
@@ -219,7 +254,7 @@ function initApp(){
     function markButtons(indicesArr){
         indicesArr.forEach(index => {
             const btn = document.querySelector(`.btn${index}`);
-            btn.style.backgroundColor = 'yellow';
+            btn.classList.add('hl');
         })
     }
 }
