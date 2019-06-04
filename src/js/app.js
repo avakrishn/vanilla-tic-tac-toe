@@ -6,17 +6,20 @@ window.onload = function(){
 
 function initApp(){
     const state ={
+        size : 4,
         board : [],
         player : 'X',
     }
     const app = document.querySelector('.game');
-    createBoard(3, app);
+    
+    createBoard(app);
 
 
-    function createBoard(n, app){
+    function createBoard(app){
+        const n = state.size;
         // create N*N board
         // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
-        let newBoard = new Array(n*n).fill(' ');
+        const newBoard = new Array(n*n).fill(' ');
         state.board = newBoard;
 
         const buttonDiv = document.createElement('div');
@@ -28,7 +31,7 @@ function initApp(){
             for(let cols = 0; cols < n; cols++){
                 const btn = document.createElement('button');
                 btn.classList.add(`col`, `col${counter}`);
-                btn.innerText = state.board[counter];
+                // btn.innerText = state.board[counter];
                 row.append(btn);
                 counter++;
             }
@@ -37,9 +40,23 @@ function initApp(){
 
         displayBoard();
         
+    }
+
+    function displayBoard(){
+        const n = state.size;
+        for(let i = 0; i < n*n; i++){
+            const btn = document.querySelector(`.col${i}`);
+            btn.innerText = state.board[i];
+        }
+
+        console.log(state.board);
+        
+    }
+
+}
 
 
-        /*
+/*
                 wins:
                 each row
                 each col
@@ -72,11 +89,3 @@ function initApp(){
                 [4,8,12,16,20]
         
         */
-    }
-
-    function displayBoard(){
-        console.log(state.board);
-        
-    }
-
-}
