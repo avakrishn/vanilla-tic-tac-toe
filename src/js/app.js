@@ -2,19 +2,27 @@
 
 window.onload = function(){
     initApp();
+
+    const reset = document.querySelector('.reset');
+    reset.addEventListener('click', initApp);
 }
 
 function initApp(){
+   
     const state ={
-        size : 4,
+        size : 3,
         board : [],
         player : true, // true = "X" and false = "O"
-        remaining: 4*4
+        remaining: 3*3,
+        lastButton: [],
     }
+   
     const app = document.querySelector('.game');
-    
+    const undo = document.querySelector('.undo');
+    app.innerHTML="";
     createBoard(app);
 
+    undo.addEventListener('click', undoLastMove);
 
     function createBoard(app){
         const n = state.size;
@@ -46,14 +54,17 @@ function initApp(){
     }
 
     function handleClick(){
+        // undo.disabled = false;
         const btn = this;
         const btnID = btn.getAttribute('data');
 
         state.board[btnID] = (state.player) ? "X" : "O";
         state.player = !state.player; // change to next player
         state.remaining--;
+        state.lastButton.push(btnID);
 
-        btn.setAttribute("disabled", true);
+        btn.disabled = true;
+        
         displayBoard();
     }
 
@@ -75,17 +86,24 @@ function initApp(){
         }else{
             displayPlayerOrResult();
         }
-        console.log(state.board);
     }
 
     function displayPlayerOrResult(result){
         const player = document.querySelector('.player');
+        const undo = document.querySelector('.undo');
         if(!result){
             player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
+            if(state.remaining === state.size * state.size){
+                undo.disabled = true;
+            }else{
+                undo.disabled = false;
+            }
         }else{
             player.innerText = result;
             const allBtns = document.querySelectorAll('.game button');
-            allBtns.forEach(btn => btn.setAttribute('disabled', true));
+            allBtns.forEach(btn => btn.disabled = true);
+            undo.disabled = true;
+            undo.removeEventListener('click', undoLastMove);
         }
         
     }
@@ -182,6 +200,20 @@ function initApp(){
         return arr.reduce((total, element) => {
             return total = (state.board[element] === prevPlayer) ? total + 1 : total;
         }, 0);
+    }
+
+    function undoLastMove(){
+
+        if(state.remaining === (state.size * state.size)) return;
+    
+        const btnID = state.lastButton.pop();
+        const btn = document.querySelector(`.btn${btnID}`);
+        btn.disabled = false;
+        state.player = !state.player;
+        state.board[btnID] = " ";
+        state.remaining++;
+        displayBoard();
+    
     }
 
     function markButtons(indicesArr){
