@@ -20,7 +20,7 @@ function initApp(){
         const n = state.size;
         // create N*N board
         // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
-        const newBoard = new Array(n*n).fill('');
+        const newBoard = new Array(n*n).fill(' ');
         state.board = newBoard;
 
         const buttonDiv = document.createElement('div');
@@ -40,26 +40,8 @@ function initApp(){
             }
             app.append(row);
         }
-
+        // displayPlayer();
         displayBoard();
-        
-    }
-
-    function displayBoard(){
-        const player = document.querySelector('.player');
-        const result = document.querySelector('.result');
-        const n = state.size;
-
-        for(let i = 0; i < n*n; i++){
-            const btn = document.querySelector(`.col${i}`);
-            btn.innerText = state.board[i];
-        }
-        player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
-
-        if(isTie()){
-            result.innerText = "Tie Game!";
-        }
-        console.log(state.board);
         
     }
 
@@ -74,8 +56,68 @@ function initApp(){
         displayBoard();
     }
 
+    function displayBoard(){
+        
+        const playerDiv = document.querySelector('.player');
+        const n = state.size;
+        const prevPlayer = (!state.player) ? "X" : "O";
+
+        for(let i = 0; i < n*n; i++){
+            const btn = document.querySelector(`.col${i}`);
+            btn.innerText = state.board[i];
+        }
+        displayPlayer();
+        if(isTie()){
+            playerDiv.innerText = "Tie Game!";
+        }if(checkRows()){
+            playerDiv.innerText =`Player ${prevPlayer} Wins!`;
+        }
+        console.log(state.board);
+        checkRows();
+    }
+
+    function displayPlayer(){
+        const player = document.querySelector('.player');
+        player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
+    }
+
+    function displayResult(){
+
+    }
+
+
+
     function isTie(){
         return (state.remaining === 0) 
+    }
+
+    function isWin(){
+        return checkRows() || checkColumns() || checkDiagonals();
+    }
+    function checkRows(){
+        const n = state.size;
+        const prevPlayer = (!state.player) ? "X" : "O"; // need to check the last player so use bang operation to get the previous player because by this point the state.player is pointing to the next player
+        for(let i = 0; i < n*n; i = i+n){
+            const row = state.board.slice(i,i+n);
+            // checking to see if the last player to click a button in fact won by filling up an entire row 
+            const numMatches = row.reduce((total, element) => {
+                return total = (element === prevPlayer) ? total + 1 : total;
+            }, 0);
+            // if the full row has all buttons filled (all n) and are equal to previous player symbol) then return true
+            if(numMatches === n){
+                // createHighlight();
+                return true;
+            }
+            
+        }
+        // there are no full rows that match
+        return false;
+    }
+    function checkColumns(){
+
+    }
+    function checkDiagonals(){
+
     }
 
 }
