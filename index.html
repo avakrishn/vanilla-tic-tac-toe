@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>VanillaJS Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
     <link rel="stylesheet" href="./src/css/style.css">
 
 </head>
 
 <body>
     <h1>VanillaJS Tic Tac Toe</h1>
-    <h2 class="player"></h2>
-    <div class="game"></div>
-    <div>
-        <button class="undo">Undo</button>
-        <button class="reset">Reset</button>
+    <div class="chooseBoard">
+        <h2 class="chooseText">Choose Your Board Size</h2>
+        <input type="range" min="3" max="12" value="4" class="slider">
+        <h2 class="boardValue"></h2>
+        <!-- <button class="playGame">Play Game!</button> -->
     </div>
+    <!-- <div class="app"> -->
+        <h2 class="player"></h2>
+        <div class="game"></div>
+        <div class="actions">
+            <button class="undo">Undo</button>
+            <button class="reset">Reset</button>
+        </div>
+    <!-- </div> -->
+    
     
     <script src="./src/js/app.js"></script>
 </body>
