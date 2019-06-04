@@ -7,12 +7,11 @@ window.onload = function(){
 function chooseBoardSize(){
     
     const slider = document.querySelector('input');
-    slider.addEventListener('change', updateValue);
-
     const boardValue = document.querySelector('.boardValue');
-    boardValue.innerText = slider.value;
-
     const reset = document.querySelector('.reset');
+
+    boardValue.innerText = slider.value;
+    slider.addEventListener('change', updateValue);
     reset.addEventListener('click', resetGame);
 
     function updateValue(){
@@ -24,9 +23,11 @@ function chooseBoardSize(){
         const chooseText = document.querySelector('.chooseText');
 
         slider.disabled = false;
-        chooseText.innerText = "Choose Your Board Size";
-        initGame(parseInt(slider.value));
+        slider.style.background = 'green';
 
+        chooseText.innerText = "Choose Your Board Size";
+
+        initGame(parseInt(slider.value));
     }
 
 }
@@ -43,6 +44,7 @@ function initGame(boardSize){
    
     const game = document.querySelector('.game');
     const undo = document.querySelector('.undo');
+
     game.innerHTML="";
     createBoard(game);
 
@@ -53,9 +55,11 @@ function initGame(boardSize){
         // create N*N board
         // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
         const newBoard = new Array(n*n).fill(' ');
+        let counter = 0;
+
         state.board = newBoard;
 
-        let counter = 0;
+
         
         for(let rows = 0; rows < n; rows++){
             const row = document.createElement('div');
@@ -77,18 +81,16 @@ function initGame(boardSize){
     }
 
     function handleClick(){
-        // undo.disabled = false;
-
-        if(state.remaining === (state.size * state.size)){
-            const slider = document.querySelector('input');
-            const chooseText = document.querySelector('.chooseText');
-            
-            slider.disabled = true;
-            chooseText.innerText = "Reset Game To Change Board";
-        }
-
+        const slider = document.querySelector('input');
+        const chooseText = document.querySelector('.chooseText');
         const btn = this;
         const btnID = btn.getAttribute('data');
+
+        if(state.remaining === (state.size * state.size)){
+            slider.disabled = true;
+            slider.style.background = 'grey';
+            chooseText.innerText = "Reset Game To Change Board";
+        }
 
         state.board[btnID] = (state.player) ? "X" : "O";
         state.player = !state.player; // change to next player
@@ -123,18 +125,22 @@ function initGame(boardSize){
     function displayPlayerOrResult(result){
         const player = document.querySelector('.player');
         const undo = document.querySelector('.undo');
+        const allBtns = document.querySelectorAll('.game button');
+
         if(!result){
             player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
             if(state.remaining === state.size * state.size){
                 undo.disabled = true;
+                undo.style.backgroundColor = 'grey';
             }else{
+                undo.style.backgroundColor = 'green';
                 undo.disabled = false;
             }
         }else{
             player.innerText = result;
-            const allBtns = document.querySelectorAll('.game button');
             allBtns.forEach(btn => btn.disabled = true);
             undo.disabled = true;
+            undo.style.backgroundColor = 'grey';
             undo.removeEventListener('click', undoLastMove);
         }
         
@@ -145,7 +151,6 @@ function initGame(boardSize){
     }
 
     function isWin(){
-        
         const rows = checkRows(),
             cols = checkColumns(),
             diagonals = checkDiagonals();
@@ -155,7 +160,6 @@ function initGame(boardSize){
     }
 
     function checkRows(){
-        
         const n = state.size;
         
         for(let i = 0; i < n*n; i = i+n){
@@ -177,6 +181,7 @@ function initGame(boardSize){
 
     function checkColumns(){
         const n = state.size;
+
         for(let i = 0; i < n; i++){
             const columnIndices = [];
             for(let j = i; j < n*n; j=j+n){
@@ -196,6 +201,8 @@ function initGame(boardSize){
             d2 = n-1, 
             diagonal1Indices = [], 
             diagonal2Indices =[],
+            diagonal1Matches,
+            diagonal2Matches
             count = 0;
 
         while(d1 < n*n){
@@ -208,8 +215,9 @@ function initGame(boardSize){
             d2 += (n-1);
         }
 
-        const diagonal1Matches = numMatches(diagonal1Indices);
-        const diagonal2Matches = numMatches(diagonal2Indices);
+        diagonal1Matches = numMatches(diagonal1Indices);
+        diagonal2Matches = numMatches(diagonal2Indices);
+
         if(diagonal1Matches === n){
             markButtons(diagonal1Indices);
         } 
@@ -232,17 +240,19 @@ function initGame(boardSize){
          // return the number within the arr = row || column || diagonal that have elements that match the previous player symbol
 
         const prevPlayer = (!state.player) ? "X" : "O";
+        
         return arr.reduce((total, element) => {
             return total = (state.board[element] === prevPlayer) ? total + 1 : total;
         }, 0);
     }
 
     function undoLastMove(){
+        const btnID = state.lastButton.pop();
+        const btn = document.querySelector(`.btn${btnID}`);
 
         if(state.remaining === (state.size * state.size)) return;
     
-        const btnID = state.lastButton.pop();
-        const btn = document.querySelector(`.btn${btnID}`);
+
         btn.disabled = false;
         state.player = !state.player;
         state.board[btnID] = " ";
