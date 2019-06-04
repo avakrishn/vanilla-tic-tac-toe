@@ -9,6 +9,7 @@ function initApp(){
         size : 4,
         board : [],
         player : true, // true = "X" and false = "O"
+        remaining: 4*4
     }
     const app = document.querySelector('.game');
     
@@ -45,11 +46,14 @@ function initApp(){
     }
 
     function displayBoard(){
+        const player = document.querySelector('.player');
         const n = state.size;
+
         for(let i = 0; i < n*n; i++){
             const btn = document.querySelector(`.col${i}`);
             btn.innerText = state.board[i];
         }
+        player.innerText = `Player: ${(state.player) ? "X" : "O"}`;
 
         console.log(state.board);
         
@@ -58,9 +62,10 @@ function initApp(){
     function handleClick(){
         const btn = this;
         const btnID = btn.getAttribute('data');
-        state.board[btnID] = (state.player) ? "X" :"O";
+        state.board[btnID] = (state.player) ? "X" : "O";
         // changePlayer();
         state.player = !state.player;
+        state.remaining--;
         btn.setAttribute("disabled", true);
         displayBoard();
     }
