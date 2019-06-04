@@ -8,7 +8,7 @@ function initApp(){
     const state ={
         size : 4,
         board : [],
-        player : 'X',
+        player : true, // true = "X" and false = "O"
     }
     const app = document.querySelector('.game');
     
@@ -19,7 +19,7 @@ function initApp(){
         const n = state.size;
         // create N*N board
         // let newBoard = new Array(n).fill(new Array(n).fill(" ")); // 2d
-        const newBoard = new Array(n*n).fill(' ');
+        const newBoard = new Array(n*n).fill('');
         state.board = newBoard;
 
         const buttonDiv = document.createElement('div');
@@ -31,6 +31,8 @@ function initApp(){
             for(let cols = 0; cols < n; cols++){
                 const btn = document.createElement('button');
                 btn.classList.add(`col`, `col${counter}`);
+                btn.addEventListener('click', handleClick);
+                btn.setAttribute('data', counter);
                 // btn.innerText = state.board[counter];
                 row.append(btn);
                 counter++;
@@ -52,6 +54,17 @@ function initApp(){
         console.log(state.board);
         
     }
+
+    function handleClick(){
+        const btn = this;
+        const btnID = btn.getAttribute('data');
+        state.board[btnID] = (state.player) ? "X" :"O";
+        // changePlayer();
+        state.player = !state.player;
+        btn.setAttribute("disabled", true);
+        displayBoard();
+    }
+
 
 }
 
