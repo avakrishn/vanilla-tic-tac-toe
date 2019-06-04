@@ -109,6 +109,7 @@ function initApp(){
         // there are no full rows that match
         return false;
     }
+
     function checkColumns(){
         const n = state.size;
         for(let i = 0; i < n; i++){
@@ -122,6 +123,18 @@ function initApp(){
     }
 
     function checkDiagonals(){
+        const n = state.size;
+        let d1 = 0, d2= n-1, diagonal1 = [], diagonal2 = [];
+
+        while(d1 < n*n){
+            diagonal1.push(state.board[d1]);
+            d1 += (n+1);
+        }
+        while(d2 < n*n){
+            diagonal2.push(state.board[d2]);
+            d2 += (n-1);
+        }
+        if(numMatches(diagonal1) === n || numMatches(diagonal2) === n) return true;
 
     }
     
@@ -162,9 +175,12 @@ function initApp(){
                 [12,13,14,15]
 
                 ["0,1,2,3," "4,5,6,7," "8,9,10,11" ,"12,13,14,15"] rows
+
                 ["0",1,2,3,"4",5,6,7,"8",9,10,11,"12",13,14,15] cols
-                ["0",1,2,3,4,"5",6,7,8,9,"10",11,12,13,14,"15"] diagonal 1
-                [0,1,2,"3",4,5,"6",7,8,"9",10,11,"12",13,14,15]
+
+                ["0",1,2,3,4,"5",6,7,8,9,"10",11,12,13,14,"15"] diagonal 1 - start at 0 then keep adding n+1 to it till out of bounds to get first diagonal indices
+
+                [0,1,2,"3",4,5,"6",7,8,"9",10,11,"12",13,14,15] diagonal 2 - start at n-1 and add n-1 each time till out of bounds to get diagonal 2
 
                 [0, 1, 2, 3, 4]
                 [5, 6, 7, 8, 9]
